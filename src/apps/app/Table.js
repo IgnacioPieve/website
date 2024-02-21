@@ -1,12 +1,9 @@
-import React, {forwardRef, useEffect, useState} from 'react';
-import MaterialTable from 'material-table';
+import React from 'react';
 import {DataGrid} from '@mui/x-data-grid';
 import {ThemeProvider, createTheme, Button} from '@mui/material';
 import axios from "axios";
 
 const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/transactions';
-const token = 'Bearer nM9xU@DYLiXW7ZW*BdkLWFrnwULn6DkU';
-const headers = {'Authorization': token};
 
 export default function Table() {
     const [transactions, setTransactions] = React.useState({});
@@ -34,7 +31,7 @@ export default function Table() {
     }
 
     const getTransactions = async () => {
-        const response = await axios.get(baseURL, {headers});
+        const response = await axios.get(baseURL);
         await handleUpdate(response.data);
     }
 
