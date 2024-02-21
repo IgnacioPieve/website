@@ -1,66 +1,127 @@
-import React, {forwardRef} from 'react';
+import React, {forwardRef, useEffect, useState} from 'react';
 import MaterialTable from 'material-table';
-import { DataGrid } from '@mui/x-data-grid';
-import {ThemeProvider, createTheme} from '@mui/material';
+import {DataGrid} from '@mui/x-data-grid';
+import {ThemeProvider, createTheme, Button} from '@mui/material';
+import axios from "axios";
+
+const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/transactions';
+const token = 'Bearer nM9xU@DYLiXW7ZW*BdkLWFrnwULn6DkU';
+const headers = {'Authorization': token};
+
+export default function Table() {
+    const [transactions, setTransactions] = React.useState({});
+    const [categories, setCategories] = React.useState([]);
+    const [subcategories, setSubcategories] = React.useState({});
+
+    const handleUpdate = async (transactions) => {
+        const categories = [];
+        const subcategories = {};
+        for (const transaction of transactions) {
+            if (!categories.includes(transaction.category)) {
+                categories.push(transaction.category);
+                subcategories[transaction.category] = [];
+            }
+            if (!subcategories[transaction.category].includes(transaction.subcategory)) {
+                subcategories[transaction.category].push(transaction.subcategory);
+            }
+            transaction.amount_ARS = transaction.amount.ARS;
+            transaction.amount_USD = transaction.amount.USD;
+            transaction.datetime = new Date(transaction.datetime);
+        }
+        setTransactions(transactions);
+        setCategories(categories);
+        setSubcategories(subcategories);
+    }
+
+    const getTransactions = async () => {
+        const response = await axios.get(baseURL, {headers});
+        await handleUpdate(response.data);
+    }
+
+    React.useEffect(() => {
+        getTransactions();
+    }, []);
 
 
-const Table = () => {
-    const data = [
+    const columns = [
         {
-            "id": 1,
-            "amount.USD": 1.17,
-            "subcategory": "Supermercado",
-            "source": "🏦 Transferencia",
-            "datetime": {
-                "$date": "2024-02-07T22:03:00.000Z"
-            },
-            "category": "🛒 Supermercado",
-            "description": "Jugo",
-            "created_at": {
-                "$date": "2024-02-08T22:04:11.746Z"
-            },
-            "currency": "ARS"
+            headerName: 'Fecha',
+            field: 'datetime',
+            type: 'dateTime',
+            editable: true,
+            width: 150
         },
         {
-            "id": 2,
-            "amount.ARS": 1350,
-            "subcategory": "Supermercado",
-            "source": "🏦 Transferencia",
-            "datetime": {
-                "$date": "2024-02-07T22:03:00.000Z"
+            headerName: 'Categoría',
+            field: 'category',
+            type: 'singleSelect',
+            editable: true,
+            valueOptions: categories,
+            width: 200
+        },
+        {
+            headerName: 'Subcategoría',
+            field: 'subcategory',
+            type: 'singleSelect',
+            editable: true,
+            width: 175,
+            valueOptions: ({row}) => subcategories[row.category],
+        },
+        {
+            headerName: 'Descripción',
+            field: 'description',
+            editable: true,
+            width: 175
+        },
+        {
+            headerName: '$ARS',
+            field: 'amount_ARS',
+            editable: true,
+            type: 'number',
+            width: 100,
+            valueFormatter: (params) => {
+                if (params.value == null) {
+                    return '';
+                }
+                return `$ ${params.value.toFixed(2)}`;
             },
-            "category": "🛒 Supermercado",
-            "description": "Jugo",
-            "created_at": {
-                "$date": "2024-02-08T22:04:11.746Z"
+        },
+        {
+            headerName: '$USD',
+            field: 'amount_USD',
+            editable: true,
+            type: 'number',
+            width: 100,
+            valueFormatter: (params) => {
+                if (params.value == null) {
+                    return '';
+                }
+                return `$ ${params.value.toFixed(2)}`;
             },
-            "currency": "ARS"
-        }
-    ];
-    const columns = [
-        {headerName: '$ARS', field: 'amount.ARS', editable: true},
-        {headerName: '$USD', field: 'amount.USD', editable: true},
-        {headerName: 'Subcategory', field: 'subcategory', editable: true},
-        {headerName: 'Source', field: 'source', editable: true},
-        {headerName: 'Datetime', field: 'datetime.$date'},
-        {headerName: 'Category', field: 'category'},
-        {headerName: 'Description', field: 'description', editable: true},
-        {headerName: 'Created At', field: 'created_at.$date', editable: true},
-        {headerName: 'Currency', field: 'currency', editable: true},
+        },
+
     ];
 
     const defaultMaterialTheme = createTheme();
 
     return (
         <div>
-            <ThemeProvider theme={defaultMaterialTheme}>
-                <DataGrid
-                    columns={columns}
-                    rows={data}
-                />
-            </ThemeProvider>
+            <Button variant="contained" onClick={getTransactions}>Refresh</Button>
+            <div style={{ height: 850, width: 950 }}>
+                <ThemeProvider theme={defaultMaterialTheme}>
+                    <DataGrid
+                        columns={columns}
+                        rows={transactions}
+                        initialState={{
+                            sorting: {
+                                sortModel: [{ field: 'datetime', sort: 'desc' }],
+                            },
+                        }}
+                    />
+                </ThemeProvider>
+            </div>
+
         </div>
     );
 };
 
-export default Table;
