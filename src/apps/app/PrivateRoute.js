@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import {Navigate, Outlet } from 'react-router-dom';
+import { useCookies } from 'react-cookie'
 
 const PrivateRoute = () => {
-    const isAuthenticated_ = useState(false);
-    const isAuthenticated = true;
+    const [cookies] = useCookies(['user'])
+    const isAuthenticated = !!cookies.token;
 
     return isAuthenticated ? <Outlet /> : <Navigate to="login" />;
 };
