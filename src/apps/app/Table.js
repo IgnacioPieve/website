@@ -1,11 +1,15 @@
 import React from 'react';
 import {DataGrid} from '@mui/x-data-grid';
-import {ThemeProvider, createTheme, Button} from '@mui/material';
+import {Button} from '@mui/material';
 import axios from "axios";
+import {useCookies} from "react-cookie";
 
 const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/transactions';
 
 export default function Table() {
+    const [cookies] = useCookies(['user'])
+    const token = cookies.token;
+
     const [transactions, setTransactions] = React.useState({});
     const [categories, setCategories] = React.useState([]);
     const [subcategories, setSubcategories] = React.useState({});
@@ -35,10 +39,22 @@ export default function Table() {
         await handleUpdate(response.data);
     }
 
+    const deleteTransaction = async (id) => {
+        const headers = {'Authorization': `Bearer ${token}`}
+        await axios.delete(
+            `${baseURL}/${id}`,
+            {headers: headers}
+        );
+        getTransactions();
+    }
+
     React.useEffect(() => {
         getTransactions();
     }, []);
 
+    const onButtonClick = (e, row) => {
+        deleteTransaction(row.id);
+    };
 
     const columns = [
         {
@@ -46,7 +62,7 @@ export default function Table() {
             field: 'datetime',
             type: 'dateTime',
             editable: true,
-            width: 150
+            flex: 1.5
         },
         {
             headerName: 'Categoría',
@@ -54,28 +70,28 @@ export default function Table() {
             type: 'singleSelect',
             editable: true,
             valueOptions: categories,
-            width: 200
+            flex: 2
         },
         {
             headerName: 'Subcategoría',
             field: 'subcategory',
             type: 'singleSelect',
             editable: true,
-            width: 175,
+            flex: 1.75,
             valueOptions: ({row}) => subcategories[row.category],
         },
         {
             headerName: 'Descripción',
             field: 'description',
             editable: true,
-            width: 175
+            flex: 1.75
         },
         {
             headerName: '$ARS',
             field: 'amount_ARS',
             editable: true,
             type: 'number',
-            width: 100,
+            flex: 1,
             valueFormatter: (params) => {
                 if (params.value == null) {
                     return '';
@@ -88,7 +104,7 @@ export default function Table() {
             field: 'amount_USD',
             editable: true,
             type: 'number',
-            width: 100,
+            flex: 1,
             valueFormatter: (params) => {
                 if (params.value == null) {
                     return '';
@@ -96,29 +112,40 @@ export default function Table() {
                 return `$ ${params.value.toFixed(2)}`;
             },
         },
-
+        {
+            field: 'actions',
+            headerName: 'Actions',
+            flex: 1,
+            renderCell: (params) => {
+                return (
+                    <Button
+                        onClick={(e) => onButtonClick(e, params.row)}
+                        variant="contained"
+                    >
+                        Delete
+                    </Button>
+                );
+            }
+        }
     ];
 
-    const defaultMaterialTheme = createTheme();
-
     return (
-        <div>
-            <Button variant="contained" onClick={getTransactions}>Refresh</Button>
-            <div style={{ height: 850, width: 950 }}>
-                <ThemeProvider theme={defaultMaterialTheme}>
+        <div style={{width: '100%'}}>
+            <div className="container text-center" style={{width: '100%'}}>
+                <Button variant="contained" onClick={getTransactions}>Refresh</Button>
+                <div style={{height: 850}}>
                     <DataGrid
                         columns={columns}
                         rows={transactions}
                         initialState={{
                             sorting: {
-                                sortModel: [{ field: 'datetime', sort: 'desc' }],
+                                sortModel: [{field: 'datetime', sort: 'desc'}],
                             },
                         }}
                     />
-                </ThemeProvider>
+                </div>
             </div>
-
         </div>
-    );
+    )
+        ;
 };
-

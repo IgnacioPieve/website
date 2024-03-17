@@ -58,7 +58,7 @@ const Home = () => {
             </div>
 
             <div className="profile">
-                <img src={profileImage} alt="Profile picture"/>
+                <img src={profileImage} alt="Profile"/>
                 <h2>👋 Hi, I'm Ignacio Pieve</h2>
                 <p>
                     I'm a <b>Software Engineer</b> at Bigbox on the ecommerce team.<br/>
@@ -77,14 +77,14 @@ const Home = () => {
                     <div className="github">
                         <i className="fa-brands fa-github"></i>
                         <b> Github:</b>
-                        <a href="https://github.com/IgnacioPieve" target="_blank">github.com/IgnacioPieve</a>
+                        <a href="https://github.com/IgnacioPieve" target="_blank" rel="noreferrer">github.com/IgnacioPieve</a>
                         <br/>
                     </div>
                     <div className="linkedin">
                         <i className="fa-brands fa-linkedin"></i>
                         <b> LinkedIn:</b>
                         <a href="https://www.linkedin.com/in/ignaciopieve/?locale=en_US"
-                           target="_blank">linkedin.com/in/ignaciopieve</a>
+                           target="_blank" rel="noreferrer">linkedin.com/in/ignaciopieve</a>
                     </div>
                 </div>
             </div>
