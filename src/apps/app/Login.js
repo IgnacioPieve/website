@@ -33,7 +33,7 @@ const Login = () => {
         <div style={{width: '100%'}}>
             <div className="container text-center" style={{width: '100%'}}>
                 <main className="form-signin">
-                    <form action="http://localhost:11001/auth/" method="POST" onSubmit={handleSubmit}>
+                    <form action="https://to29n2obk9.execute-api.us-east-1.amazonaws.com/auth" method="POST" onSubmit={handleSubmit}>
                         <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
 
                         <div className="form-floating mb-2">
