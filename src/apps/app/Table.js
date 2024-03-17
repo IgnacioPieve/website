@@ -62,7 +62,8 @@ export default function Table() {
             field: 'datetime',
             type: 'dateTime',
             editable: true,
-            flex: 1.5
+            flex: 1.5,
+            minWidth: 150
         },
         {
             headerName: 'Categoría',
@@ -70,7 +71,8 @@ export default function Table() {
             type: 'singleSelect',
             editable: true,
             valueOptions: categories,
-            flex: 2
+            flex: 2,
+            minWidth: 200
         },
         {
             headerName: 'Subcategoría',
@@ -78,13 +80,15 @@ export default function Table() {
             type: 'singleSelect',
             editable: true,
             flex: 1.75,
+            minWidth: 175,
             valueOptions: ({row}) => subcategories[row.category],
         },
         {
             headerName: 'Descripción',
             field: 'description',
             editable: true,
-            flex: 1.75
+            flex: 1.75,
+            minWidth: 175
         },
         {
             headerName: '$ARS',
@@ -92,6 +96,7 @@ export default function Table() {
             editable: true,
             type: 'number',
             flex: 1,
+            minWidth: 100,
             valueFormatter: (params) => {
                 if (params.value == null) {
                     return '';
@@ -105,6 +110,7 @@ export default function Table() {
             editable: true,
             type: 'number',
             flex: 1,
+            minWidth: 100,
             valueFormatter: (params) => {
                 if (params.value == null) {
                     return '';
@@ -116,6 +122,7 @@ export default function Table() {
             field: 'actions',
             headerName: 'Actions',
             flex: 1,
+            minWidth: 100,
             renderCell: (params) => {
                 return (
                     <Button
