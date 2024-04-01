@@ -4,11 +4,12 @@ import {Button} from '@mui/material';
 import axios from "axios";
 import {useCookies} from "react-cookie";
 
-const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/transactions';
+const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/expenses/transaction';
 
 export default function Table() {
     const [cookies] = useCookies(['user'])
     const token = cookies.token;
+    const headers = {'Authorization': `Bearer ${token}`}
 
     const [transactions, setTransactions] = React.useState({});
     const [categories, setCategories] = React.useState([]);
@@ -35,12 +36,14 @@ export default function Table() {
     }
 
     const getTransactions = async () => {
-        const response = await axios.get(baseURL);
+        const response = await axios.get(
+            baseURL,
+            {headers: headers}
+        );
         await handleUpdate(response.data);
     }
 
     const deleteTransaction = async (id) => {
-        const headers = {'Authorization': `Bearer ${token}`}
         await axios.delete(
             `${baseURL}/${id}`,
             {headers: headers}
