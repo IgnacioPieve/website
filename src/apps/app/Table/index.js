@@ -3,6 +3,8 @@ import {DataGrid} from '@mui/x-data-grid';
 import {Button} from '@mui/material';
 import axios from "axios";
 import {useCookies} from "react-cookie";
+import Row from "./row";
+import Head from "./head";
 
 const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/expenses/transaction';
 
@@ -11,36 +13,15 @@ export default function Table() {
     const token = cookies.token;
     const headers = {'Authorization': `Bearer ${token}`}
 
-    const [transactions, setTransactions] = React.useState({});
-    const [categories, setCategories] = React.useState([]);
-    const [subcategories, setSubcategories] = React.useState({});
+    const [transactions, setTransactions] = React.useState([]);
 
-    const handleUpdate = async (transactions) => {
-        const categories = [];
-        const subcategories = {};
-        for (const transaction of transactions) {
-            if (!categories.includes(transaction.category)) {
-                categories.push(transaction.category);
-                subcategories[transaction.category] = [];
-            }
-            if (!subcategories[transaction.category].includes(transaction.subcategory)) {
-                subcategories[transaction.category].push(transaction.subcategory);
-            }
-            transaction.amount_ARS = transaction.amount.ARS;
-            transaction.amount_USD = transaction.amount.USD;
-            transaction.datetime = new Date(transaction.datetime);
-        }
-        setTransactions(transactions);
-        setCategories(categories);
-        setSubcategories(subcategories);
-    }
 
     const getTransactions = async () => {
         const response = await axios.get(
             baseURL,
             {headers: headers}
         );
-        await handleUpdate(response.data);
+        setTransactions(response.data);
     }
 
     const deleteTransaction = async (id) => {
@@ -73,7 +54,7 @@ export default function Table() {
             field: 'category',
             type: 'singleSelect',
             editable: true,
-            valueOptions: categories,
+            // valueOptions: categories,
             flex: 2,
             minWidth: 200
         },
@@ -84,7 +65,7 @@ export default function Table() {
             editable: true,
             flex: 1.75,
             minWidth: 175,
-            valueOptions: ({row}) => subcategories[row.category],
+            // valueOptions: ({row}) => subcategories[row.category],
         },
         {
             headerName: 'Descripción',
@@ -143,19 +124,13 @@ export default function Table() {
         <div style={{width: '100%'}}>
             <div className="container text-center" style={{width: '100%'}}>
                 <Button variant="contained" onClick={getTransactions}>Refresh</Button>
-                <div style={{height: 850}}>
-                    <DataGrid
-                        columns={columns}
-                        rows={transactions}
-                        initialState={{
-                            sorting: {
-                                sortModel: [{field: 'datetime', sort: 'desc'}],
-                            },
-                        }}
-                    />
-                </div>
+                <table className={"table table-hover"}>
+                    <thead><Head></Head></thead>
+                    <tbody>
+                    {transactions.map((transaction) => <Row key={transaction.id} transaction={transaction}/>)}
+                    </tbody>
+                </table>
             </div>
         </div>
-    )
-        ;
+    );
 };
