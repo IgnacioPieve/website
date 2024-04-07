@@ -4,7 +4,7 @@ export default function Head() {
     return (
         <tr>
             <th className={"text-start"} scope={"col"}>Fecha</th>
-            <th className={"text-start"} scope={"col"}>Categoria</th>
+            <th className={"text-start d-none d-sm-table-cell"} scope={"col"}>Categoria</th>
             <th className={"text-start"} scope={"col"}>Descripcion</th>
             <th className={"text-center"} scope={"col"}>Monto</th>
             <th className={"text-center"} scope={"col"}>Acciones</th>
