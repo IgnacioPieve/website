@@ -120,16 +120,14 @@ export default function Table() {
         }
     ];
 
+    // <Button variant="contained" onClick={getTransactions}>Refresh</Button>
+    // {transactions.map((transaction) => <Row key={transaction.id} transaction={transaction}/>)}
     return (
-        <div style={{width: '100%'}}>
-            <div className="container text-center" style={{width: '100%'}}>
-                <Button variant="contained" onClick={getTransactions}>Refresh</Button>
-                <table className={"table table-hover"}>
-                    <thead><Head></Head></thead>
-                    <tbody>
+        <div className={"container"} style={{backgroundColor: 'white'}}>
+            <div className="row">
+                <div className="col">
                     {transactions.map((transaction) => <Row key={transaction.id} transaction={transaction}/>)}
-                    </tbody>
-                </table>
+                </div>
             </div>
         </div>
     );
