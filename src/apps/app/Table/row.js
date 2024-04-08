@@ -1,4 +1,5 @@
 import './row.css';
+import React from "react";
 
 export default function Row(row) {
     const transaction = row.transaction;
@@ -20,33 +21,6 @@ export default function Row(row) {
         </div>
     }
 
-    // const formatDate = (date) => {
-    //     date = new Date(date);
-    //     // only_date format should be "25 de Abril"
-    //     const only_date = date.toLocaleDateString('es-AR', {day: 'numeric', month: 'long'});
-    //     // only_time format should be "14:30"
-    //     const only_time = date.toLocaleTimeString('es-AR', {hour: '2-digit', minute: '2-digit'});
-    //     return <div style={{}}>
-    //         <div style={{fontWeight: 'bold', fontSize: '14px'}}>
-    //             {only_date}
-    //         </div>
-    //         <div style={{fontWeight: 'normal', fontSize: '12px'}}>
-    //             {only_time}
-    //         </div>
-    //     </div>
-    // }
-
-    // const formatCategory = (category, subcategory) => {
-    //     return <div>
-    //         <div style={{fontWeight: 'bold', fontSize: '14px'}}>
-    //             {category}
-    //         </div>
-    //         <div style={{fontWeight: 'normal', fontSize: '12px'}}>
-    //             {subcategory.substring(2)}
-    //         </div>
-    //     </div>
-    // }
-
     const formatCurrencies = (original_currency, amount) => {
         const usd = 'US$ ' + amount.USD?.toFixed(2);
         const ars = 'AR$ ' + amount.ARS?.toFixed(2);
@@ -63,7 +37,7 @@ export default function Row(row) {
 
         return <div>
             <div className="first_currency">{first_currency}</div>
-            <div className="second_currency">{second_currency}</div>
+            {second_currency && <div className="second_currency">{second_currency}</div>}
         </div>
     }
 
@@ -80,17 +54,10 @@ export default function Row(row) {
         return `${day} ${month} ${year}, ${hours}:${minutes}`;
     }
 
-    // <td className={"text-start"}>{formatDate(transaction.datetime)}</td>
-    //             <td className={"text-start d-none d-sm-table-cell"}>{formatCategory(transaction.category, transaction.subcategory)}</td>
-    //             <td className={"text-start"} style={{fontWeight: 'bold', fontSize: '14px'}}>{transaction.description}</td>
-    //             <td className={"text-end"}>{formatCurrencies(transaction.amount)}</td>
-    //             <td>
-    //                 <button type="button" className="btn btn-outline-danger"><i className="fa-regular fa-trash-can"></i>
-    //                 </button>
-    //             </td>
 
     return (
-        <div className={"row mb-2"}>
+        <div className={"row mb-2"} style={{width: '100%'}}>
+
             <div className="col-2">
                 {formatCategory(transaction.category)}
             </div>
@@ -101,6 +68,7 @@ export default function Row(row) {
             <div className="col justify-content-center align-self-center">
                 {formatCurrencies(transaction.original_currency, transaction.amount)}
             </div>
+
         </div>
     );
 

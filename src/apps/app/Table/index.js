@@ -1,9 +1,10 @@
 import React from 'react';
-import {Button} from '@mui/material';
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import Row from "./row";
 import './index.css';
+import 'react-swipeable-list/dist/styles.css';
+import {SwipeableList, SwipeableListItem, SwipeAction, TrailingActions, Type as ListType} from "react-swipeable-list";
 
 const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/expenses/transaction';
 
@@ -28,104 +29,39 @@ export default function Table() {
             `${baseURL}/${id}`,
             {headers: headers}
         );
-        getTransactions();
     }
 
     React.useEffect(() => {
         getTransactions();
     }, []);
 
-    const onButtonClick = (e, row) => {
-        deleteTransaction(row.id);
-    };
+    const onButtonClick = (e, row) => deleteTransaction(row.id);
 
-    const columns = [
-        {
-            headerName: 'Fecha',
-            field: 'datetime',
-            type: 'dateTime',
-            editable: true,
-            flex: 1.5,
-            minWidth: 150
-        },
-        {
-            headerName: 'Categoría',
-            field: 'category',
-            type: 'singleSelect',
-            editable: true,
-            // valueOptions: categories,
-            flex: 2,
-            minWidth: 200
-        },
-        {
-            headerName: 'Subcategoría',
-            field: 'subcategory',
-            type: 'singleSelect',
-            editable: true,
-            flex: 1.75,
-            minWidth: 175,
-            // valueOptions: ({row}) => subcategories[row.category],
-        },
-        {
-            headerName: 'Descripción',
-            field: 'description',
-            editable: true,
-            flex: 1.75,
-            minWidth: 175
-        },
-        {
-            headerName: '$ARS',
-            field: 'amount_ARS',
-            editable: true,
-            type: 'number',
-            flex: 1,
-            minWidth: 100,
-            valueFormatter: (params) => {
-                if (params.value == null) {
-                    return '';
-                }
-                return `$ ${params.value.toFixed(2)}`;
-            },
-        },
-        {
-            headerName: '$USD',
-            field: 'amount_USD',
-            editable: true,
-            type: 'number',
-            flex: 1,
-            minWidth: 100,
-            valueFormatter: (params) => {
-                if (params.value == null) {
-                    return '';
-                }
-                return `$ ${params.value.toFixed(2)}`;
-            },
-        },
-        {
-            field: 'actions',
-            headerName: 'Actions',
-            flex: 1,
-            minWidth: 100,
-            renderCell: (params) => {
-                return (
-                    <Button
-                        onClick={(e) => onButtonClick(e, params.row)}
-                        variant="contained"
-                    >
-                        Delete
-                    </Button>
-                );
-            }
-        }
-    ];
+    const trailingAction = (id) => (
+        <TrailingActions>
+            <SwipeAction
+                destructive={true}
+                onClick={async () => await deleteTransaction(id)}
+            >
+                <div style={{backgroundColor: "red"}}>
+                </div>
+            </SwipeAction>
+        </TrailingActions>
+    );
 
-    // <Button variant="contained" onClick={getTransactions}>Refresh</Button>
-    // {transactions.map((transaction) => <Row key={transaction.id} transaction={transaction}/>)}
     return (
         <div className="row justify-content-md-center m-2">
             <div className="col-12 col-md-6">
                 <div className="row title m-2">Últimas transacciones</div>
-                {transactions.map((transaction) => <Row key={transaction.id} transaction={transaction}/>)}
+                <SwipeableList fullSwipe={true} type={ListType.IOS} threshold={.01}>
+                    {transactions.map((transaction) => {
+                        return (
+                            <SwipeableListItem trailingActions={trailingAction(transaction.id)}>
+                                <Row key={transaction.id} transaction={transaction}/>
+                            </SwipeableListItem>
+                    )
+                    })}
+                </SwipeableList>;
             </div>
         </div>
     );
