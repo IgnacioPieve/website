@@ -37,7 +37,7 @@ const Login = () => {
                         <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
 
                         <div className="form-floating mb-2">
-                            <input className="form-control" name="token" placeholder="AAABBB111"/>
+                            <input type="password" className="form-control" name="token" placeholder="AAABBB111"/>
                             <label htmlFor="token">Token</label>
                         </div>
 
