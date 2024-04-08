@@ -1,10 +1,9 @@
 import React from 'react';
-import {DataGrid} from '@mui/x-data-grid';
 import {Button} from '@mui/material';
 import axios from "axios";
 import {useCookies} from "react-cookie";
 import Row from "./row";
-import Head from "./head";
+import './index.css';
 
 const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/expenses/transaction';
 
@@ -123,11 +122,10 @@ export default function Table() {
     // <Button variant="contained" onClick={getTransactions}>Refresh</Button>
     // {transactions.map((transaction) => <Row key={transaction.id} transaction={transaction}/>)}
     return (
-        <div className={"container"} style={{backgroundColor: 'white'}}>
-            <div className="row">
-                <div className="col">
-                    {transactions.map((transaction) => <Row key={transaction.id} transaction={transaction}/>)}
-                </div>
+        <div className="row justify-content-md-center m-2">
+            <div className="col-12 col-md-6">
+                <div className="row title m-2">Últimas transacciones</div>
+                {transactions.map((transaction) => <Row key={transaction.id} transaction={transaction}/>)}
             </div>
         </div>
     );

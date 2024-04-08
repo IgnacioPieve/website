@@ -22,3 +22,18 @@
     font-size: 11px;
     color: #9DA09F;
 }
+
+.first_currency {
+    text-align: right;
+    font-weight: bold;
+    font-size: 14px;
+    color: #0D9074;
+}
+
+.second_currency {
+    text-align: right;
+    font-weight: bold;
+    vertical-align: top;
+    font-size: 11px;
+    color: #9DA09F;
+}

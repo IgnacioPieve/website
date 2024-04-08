@@ -30,7 +30,7 @@ const Login = () => {
     };
 
     return (
-        <div style={{width: '100%'}}>
+        <div className={"login-page"}>
             <div className="container text-center" style={{width: '100%'}}>
                 <main className="form-signin">
                     <form action="https://to29n2obk9.execute-api.us-east-1.amazonaws.com/auth" method="POST" onSubmit={handleSubmit}>

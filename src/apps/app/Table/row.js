@@ -10,7 +10,7 @@ export default function Row(row) {
             '📱 Servicios': 'fa-solid fa-mobile',
             '❤️‍ Salud': 'fa-solid fa-heart-pulse',
             '🛒 Supermercado': 'fa-solid fa-cart-shopping',
-            '☕ Meriendas & Comidas': 'fa-solid fa-mug-hot',
+            '☕ Meriendas & Comidas': 'fa-solid fa-utensils',
             '🐶 Mascota': 'fa-solid fa-paw',
             '🍿 Entretenimiento': 'fa-solid fa-ticket',
             '🎁 Regalos': 'fa-solid fa-gift'
@@ -47,20 +47,23 @@ export default function Row(row) {
     //     </div>
     // }
 
-    const formatCurrencies = (amount) => {
+    const formatCurrencies = (original_currency, amount) => {
         const usd = 'US$ ' + amount.USD?.toFixed(2);
         const ars = 'AR$ ' + amount.ARS?.toFixed(2);
         const eur = '€ ' + amount.EUR?.toFixed(2);
-        const first_currency = ars || usd || eur;
-        const second_currency = ars && (usd || eur) ? usd || eur : '';
+
+        const currencies = {
+            'USD': usd,
+            'ARS': ars,
+            'EUR': eur
+        }
+
+        const first_currency = currencies[original_currency];
+        const second_currency = Object.entries(currencies).filter(([key, value]) => key !== original_currency)[0][1];
 
         return <div>
-            <div style={{fontWeight: 'bold', fontSize: '14px'}}>
-                {first_currency}
-            </div>
-            <div style={{fontWeight: 'bold', fontSize: '12px', color: 'darkgreen'}}>
-                {second_currency}
-            </div>
+            <div className="first_currency">{first_currency}</div>
+            <div className="second_currency">{second_currency}</div>
         </div>
     }
 
@@ -91,11 +94,13 @@ export default function Row(row) {
             <div className="col-2">
                 {formatCategory(transaction.category)}
             </div>
-            <div className="col-7 ms-2 justify-content-center align-self-center">
+            <div className="col-5 ms-3 justify-content-center align-self-center">
                 <div className="row description">{transaction.description}</div>
                 <div className="row datetime">{formatDate(transaction.datetime)}</div>
             </div>
-            <div className="col">monto</div>
+            <div className="col justify-content-center align-self-center">
+                {formatCurrencies(transaction.original_currency, transaction.amount)}
+            </div>
         </div>
     );
 
