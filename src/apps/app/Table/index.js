@@ -6,6 +6,10 @@ import './index.css';
 import 'react-swipeable-list/dist/styles.css';
 import {SwipeableList, SwipeableListItem, SwipeAction, TrailingActions, Type as ListType} from "react-swipeable-list";
 
+import {Bounce, toast, ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
+
 const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/expenses/transaction';
 
 export default function Table() {
@@ -24,7 +28,7 @@ export default function Table() {
         setTransactions(response.data);
     }
 
-    const deleteTransaction = async (id) => {
+    const deleteTransactionApi = async (id) => {
         await axios.delete(
             `${baseURL}/${id}`,
             {headers: headers}
@@ -35,13 +39,37 @@ export default function Table() {
         getTransactions();
     }, []);
 
-    const onButtonClick = (e, row) => deleteTransaction(row.id);
+    const deleteTransaction = (id) => {
+        let should_delete = true;
+
+        const CloseButton = ({ closeToast }) => {
+            const close_and_cancel = () => {
+                should_delete = false;
+                closeToast();
+            };
+
+            return <span onClick={close_and_cancel}>Cancelar</span>;
+        }
+
+        const handleDelete = async () => {
+            if (should_delete) {
+                await deleteTransactionApi(id);
+            } else {
+                await getTransactions();
+            }
+        }
+
+        toast('eliminando', {
+            closeButton: CloseButton,
+            onClose: () => handleDelete(),
+        });
+    }
 
     const trailingAction = (id) => (
         <TrailingActions>
             <SwipeAction
                 destructive={true}
-                onClick={async () => await deleteTransaction(id)}
+                onClick={() => deleteTransaction(id)}
             >
                 <div style={{backgroundColor: "red"}}>
                 </div>
@@ -51,6 +79,18 @@ export default function Table() {
 
     return (
         <div className="row justify-content-md-center m-2">
+            <ToastContainer
+                position="bottom-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
             <div className="col-12 col-md-6">
                 <div className="row title m-2">Últimas transacciones</div>
                 <SwipeableList fullSwipe={true} type={ListType.IOS} threshold={.01}>
@@ -62,6 +102,7 @@ export default function Table() {
                     )
                     })}
                 </SwipeableList>;
+
             </div>
         </div>
     );

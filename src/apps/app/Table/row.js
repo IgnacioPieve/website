@@ -27,9 +27,9 @@ export default function Row(row) {
         const eur = '€ ' + amount.EUR?.toFixed(2);
 
         const currencies = {
-            'USD': usd,
-            'ARS': ars,
-            'EUR': eur
+            'USD': amount.USD ? usd : null,
+            'ARS': amount.ARS ? ars : null,
+            'EUR': amount.EUR ? eur : null,
         }
 
         const first_currency = currencies[original_currency];
