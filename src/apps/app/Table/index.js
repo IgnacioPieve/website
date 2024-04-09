@@ -28,13 +28,6 @@ export default function Table() {
         setTransactions(response.data);
     }
 
-    const deleteTransactionApi = async (id) => {
-        await axios.delete(
-            `${baseURL}/${id}`,
-            {headers: headers}
-        );
-    }
-
     React.useEffect(() => {
         getTransactions();
     }, []);
@@ -53,13 +46,36 @@ export default function Table() {
 
         const handleDelete = async () => {
             if (should_delete) {
-                await deleteTransactionApi(id);
+                await axios.delete(
+                    `${baseURL}/${id}`,
+                    {headers: headers}
+                );
+                toast.success('Gasto eliminado', {
+                    position: "bottom-center",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    transition: Bounce,
+                });
             } else {
                 await getTransactions();
             }
         }
 
-        toast('eliminando', {
+        toast.info('Eliminando gasto', {
+            position: "bottom-center",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
             closeButton: CloseButton,
             onClose: () => handleDelete(),
         });
@@ -67,30 +83,15 @@ export default function Table() {
 
     const trailingAction = (id) => (
         <TrailingActions>
-            <SwipeAction
-                destructive={true}
-                onClick={() => deleteTransaction(id)}
-            >
-                <div style={{backgroundColor: "red"}}>
-                </div>
+            <SwipeAction destructive={true} onClick={() => deleteTransaction(id)}>
+                <div style={{backgroundColor: "red"}}/>
             </SwipeAction>
         </TrailingActions>
     );
 
     return (
         <div className="row justify-content-md-center m-2">
-            <ToastContainer
-                position="bottom-center"
-                autoClose={5000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
-            />
+            <ToastContainer/>
             <div className="col-12 col-md-6">
                 <div className="row title m-2">Últimas transacciones</div>
                 <SwipeableList fullSwipe={true} type={ListType.IOS} threshold={.01}>
