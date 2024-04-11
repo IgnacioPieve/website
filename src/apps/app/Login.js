@@ -2,6 +2,7 @@ import React from 'react';
 import { useCookies } from 'react-cookie'
 import './Login.css'
 import {useNavigate} from "react-router-dom";
+import BASE_URL from "./consts";
 
 const Login = () => {
     const [_, setCookie] = useCookies(['user'])
@@ -33,7 +34,7 @@ const Login = () => {
         <div className={"login-page"}>
             <div className="container text-center" style={{width: '100%'}}>
                 <main className="form-signin">
-                    <form action="https://to29n2obk9.execute-api.us-east-1.amazonaws.com/auth" method="POST" onSubmit={handleSubmit}>
+                    <form action={BASE_URL + "/auth"} method="POST" onSubmit={handleSubmit}>
                         <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
 
                         <div className="form-floating mb-2">

@@ -8,9 +8,11 @@ import {SwipeableList, SwipeableListItem, SwipeAction, TrailingActions, Type as 
 
 import {Bounce, toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import TransactionModal from "./transaction_modal";
+import BASE_URL from "../consts";
 
-
-const baseURL = ' https://to29n2obk9.execute-api.us-east-1.amazonaws.com/expenses/transaction';
+const baseURL = BASE_URL + '/expenses/transaction';
+const categoriesURL = BASE_URL + '/expenses/category';
 
 export default function Table() {
     const [cookies] = useCookies(['user'])
@@ -18,7 +20,8 @@ export default function Table() {
     const headers = {'Authorization': `Bearer ${token}`}
 
     const [transactions, setTransactions] = React.useState([]);
-
+    const [selected_transaction, setSelectedTransaction] = React.useState(null);
+    const [categories, setCategories] = React.useState([])
 
     const getTransactions = async () => {
         const response = await axios.get(
@@ -26,6 +29,20 @@ export default function Table() {
             {headers: headers}
         );
         setTransactions(response.data);
+
+        const categories_response = await axios.get(
+            categoriesURL,
+            {headers: headers}
+        );
+        const categories_dict = categories_response.data
+        const categories_list = Object.keys(categories_dict).map((key) => {
+            const subcategories = Object.keys(categories_dict[key]);
+            return {
+                category: key,
+                subcategories: subcategories
+            }
+        });
+        setCategories(categories_list);
     }
 
     React.useEffect(() => {
@@ -35,7 +52,7 @@ export default function Table() {
     const deleteTransaction = (id) => {
         let should_delete = true;
 
-        const CloseButton = ({ closeToast }) => {
+        const CloseButton = ({closeToast}) => {
             const close_and_cancel = () => {
                 should_delete = false;
                 closeToast();
@@ -92,19 +109,27 @@ export default function Table() {
     return (
         <div className="row justify-content-md-center m-2">
             <ToastContainer/>
-            <div className="col-12 col-md-6">
+            <div className="col-12 col-md-6 col-lg-3">
                 <div className="row title m-2">Últimas transacciones</div>
                 <SwipeableList fullSwipe={true} type={ListType.IOS} threshold={.01}>
                     {transactions.map((transaction) => {
                         return (
                             <SwipeableListItem trailingActions={trailingAction(transaction.id)}>
-                                <Row key={transaction.id} transaction={transaction}/>
+                                <Row transaction={transaction} setSelectedTransaction={setSelectedTransaction}/>
                             </SwipeableListItem>
-                    )
+                        )
                     })}
                 </SwipeableList>;
 
             </div>
+            <TransactionModal
+                selected_transaction={selected_transaction}
+                setSelectedTransaction={setSelectedTransaction}
+                transactions={transactions}
+                setTransactions={setTransactions}
+                categories={categories}
+                headers={headers}
+            />
         </div>
     );
 };

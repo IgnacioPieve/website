@@ -37,3 +37,12 @@
     font-size: 11px;
     color: #9DA09F;
 }
+
+.transaction {
+    cursor: pointer;
+
+}
+
+.transaction:hover {
+    background-color: #f8f8f8;
+}

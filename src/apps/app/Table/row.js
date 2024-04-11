@@ -1,8 +1,12 @@
 import './row.css';
 import React from "react";
 
-export default function Row(row) {
-    const transaction = row.transaction;
+export default function Row(props) {
+    const {
+        transaction,
+        setSelectedTransaction
+    } = props;
+
 
     const formatCategory = (category) => {
         const category_logo_mapping = {
@@ -54,9 +58,12 @@ export default function Row(row) {
         return `${day} ${month} ${year}, ${hours}:${minutes}`;
     }
 
+    const select_transaction = () => {
+        setSelectedTransaction(transaction);
+    }
 
     return (
-        <div className={"row mb-2"} style={{width: '100%'}}>
+        <div className={"row p-2 transaction"} style={{width: '100%'}} onClick={select_transaction}>
 
             <div className="col-2">
                 {formatCategory(transaction.category)}
