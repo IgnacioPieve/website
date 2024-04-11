@@ -71,6 +71,60 @@ export default function TransactionModal(props) {
         }
     }
 
+    const deleteFile = (file_id) => {
+        const new_files = selected_transaction.files.filter((file) => file.id !== file_id);
+        setSelectedTransaction({
+            ...selected_transaction,
+            files: new_files
+        });
+    }
+
+    const downloadFile = (file_id) => {
+        axios.get(
+            `${BASE_URL}/expenses/transaction/${selected_transaction.id}/file/${file_id}`,
+            {headers: headers}
+        ).then((response) => {
+            const url = response.data;
+            console.log(response)
+            window.open(url);
+        });
+    }
+
+    const addFile = (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        axios.post(
+            `${BASE_URL}/expenses/transaction/${selected_transaction.id}/file`,
+            formData,
+            {headers: headers}
+        ).then((response) => {
+            console.log(response)
+            const new_files = selected_transaction.files.concat(response.data);
+            setSelectedTransaction({
+                ...selected_transaction,
+                files: new_files
+            });
+        });
+    }
+
+    const changeFileName = (name, file_id) => {
+        const new_files = selected_transaction.files.map((file) => {
+            if (file.id === file_id) {
+                return {
+                    ...file,
+                    name: name
+                }
+            } else {
+                return file;
+            }
+        });
+        setSelectedTransaction({
+            ...selected_transaction,
+            files: new_files
+        });
+    }
+
     return <Modal size="lg" show={selected_transaction} onHide={handleClose}>
         {
             selected_transaction &&
@@ -182,6 +236,33 @@ export default function TransactionModal(props) {
                                     </div>
                                 </div>
                             </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Archivos</Form.Label>
+                                {
+                                    selected_transaction.files &&
+                                    selected_transaction.files.map((file, index) => {
+                                        return <InputGroup className={"mb-2"}>
+                                            <Form.Control
+                                                type="text"
+                                                value={file.name}
+                                                onChange={(e) => changeFileName(e.target.value, file.id)}
+                                            />
+                                            <Button variant="outline-success" onClick={() => downloadFile(file.id)}>
+                                                Descargar
+                                            </Button>
+                                            <Button variant="outline-danger" onClick={() => deleteFile(file.id)}>
+                                                Eliminar
+                                            </Button>
+                                        </InputGroup>
+                                    })
+                                }
+
+                                <Form.Control
+                                    type="file"
+                                    onChange={(e) => addFile(e.target.files[0])}
+                                />
+                            </Form.Group>
+
                         </Form>
                     </div>
                 </Modal.Body>
