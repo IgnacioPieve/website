@@ -119,7 +119,7 @@ export default function Table() {
                             </SwipeableListItem>
                         )
                     })}
-                </SwipeableList>;
+                </SwipeableList>
 
             </div>
             <TransactionModal
