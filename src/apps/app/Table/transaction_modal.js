@@ -50,7 +50,6 @@ export default function TransactionModal(props) {
     }
 
     const parseAmount = (amount, currency) => {
-        console.log(amount)
         if (amount === '') {
             setSelectedTransaction({
                 ...selected_transaction,
@@ -159,7 +158,7 @@ export default function TransactionModal(props) {
                                 <Form.Label>Descripción</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    placeholder="Completar fecha"
+                                    placeholder="Completar descripción"
                                     value={selected_transaction.description}
                                     onChange={(e) => setSelectedTransaction({
                                         ...selected_transaction, description: e.target.value
@@ -172,7 +171,6 @@ export default function TransactionModal(props) {
                                     <div className="col-12 col-md-6 mb-2">
                                         <Form.Label>Categoría</Form.Label>
                                         <Form.Select
-                                            aria-label="Default select example"
                                             value={selected_transaction.category}
                                             onChange={(e) => setSelectedTransaction({
                                                 ...selected_transaction, category: e.target.value
@@ -236,6 +234,20 @@ export default function TransactionModal(props) {
                                     </div>
                                 </div>
                             </Form.Group>
+
+                            <Form.Group className="mb-3">
+                                <Form.Label>Notas</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    value={selected_transaction.notes}
+                                    onChange={(e) => setSelectedTransaction({
+                                        ...selected_transaction, notes: e.target.value
+                                    })}
+                                />
+                            </Form.Group>
+
+
                             <Form.Group className="mb-3">
                                 <Form.Label>Archivos</Form.Label>
                                 {

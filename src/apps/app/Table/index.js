@@ -10,6 +10,7 @@ import {Bounce, toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import TransactionModal from "./transaction_modal";
 import BASE_URL from "../consts";
+import Filters from "./filters";
 
 const baseURL = BASE_URL + '/expenses/transaction';
 const categoriesURL = BASE_URL + '/expenses/category';
@@ -23,10 +24,13 @@ export default function Table() {
     const [selected_transaction, setSelectedTransaction] = React.useState(null);
     const [categories, setCategories] = React.useState([])
 
-    const getTransactions = async () => {
+    const getTransactions = async (filters) => {
         const response = await axios.get(
             baseURL,
-            {headers: headers}
+            {
+                headers: headers,
+                params: filters
+            },
         );
         setTransactions(response.data);
 
@@ -106,11 +110,38 @@ export default function Table() {
         </TrailingActions>
     );
 
+    const addTransaction = () => {
+        setSelectedTransaction({
+            datetime: null,
+            category: null,
+            subcategory: null,
+            description: null,
+            amount: {},
+        });
+    }
+
     return (
         <div className="row justify-content-md-center m-2">
             <ToastContainer/>
             <div className="col-12 col-md-6 col-lg-3">
                 <div className="row title m-2">Últimas transacciones</div>
+                <div className="row m-2">
+                    <div className="col">
+                        <Filters
+                            getTransactions={getTransactions}
+                            categories={categories}
+                        />
+                    </div>
+                    <div className="col">
+                        <button
+                            type="button"
+                            class="btn btn-outline-success"
+                            onClick={addTransaction}
+                        >
+                            Añadir
+                        </button>
+                    </div>
+                </div>
                 <SwipeableList fullSwipe={true} type={ListType.IOS} threshold={.01}>
                     {transactions.map((transaction) => {
                         return (
