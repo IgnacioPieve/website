@@ -133,13 +133,13 @@ export default function Table() {
                         />
                     </div>
                     <div className="col">
-                        <button
-                            type="button"
-                            class="btn btn-outline-success"
-                            onClick={addTransaction}
-                        >
-                            Añadir
-                        </button>
+                        {/*<button*/}
+                        {/*    type="button"*/}
+                        {/*    class="btn btn-outline-success"*/}
+                        {/*    onClick={addTransaction}*/}
+                        {/*>*/}
+                        {/*    Añadir*/}
+                        {/*</button>*/}
                     </div>
                 </div>
                 <SwipeableList fullSwipe={true} type={ListType.IOS} threshold={.01}>
