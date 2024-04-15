@@ -118,8 +118,9 @@ export default function Table() {
     );
 
     const addTransaction = () => {
+        const today_str = new Date().toISOString().split('.')[0];
         setSelectedTransaction({
-            datetime: null,
+            datetime: today_str,
             category: '🛒 Supermercado',
             subcategory: '⭐ General',
             source: '💳 Tarjeta de crédito',

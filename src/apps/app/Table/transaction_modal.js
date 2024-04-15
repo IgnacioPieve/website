@@ -19,25 +19,11 @@ export default function TransactionModal(props) {
 
     const handleClose = () => setSelectedTransaction(null);
 
-    const handleUpdate = async () => {
-        axios.put(
-            `${BASE_URL}/expenses/transaction`,
-            selected_transaction,
-            {headers: headers}
-        ).then(r => console.log('Transaction updated'));
+    function serializeDate(date) {
+        // Obtener el desplazamiento de la zona horaria en minutos
+        const offsetMinutes = date.getTimezoneOffset();
+        date.setMinutes(date.getMinutes() - offsetMinutes);
 
-        // Now we need to update the transactions list without making a call
-        const new_transactions = transactions.map((transaction) => {
-            if (transaction.id === selected_transaction.id) {
-                return selected_transaction;
-            } else {
-                return transaction;
-            }
-        });
-        setTransactions(new_transactions);
-    }
-
-    function formatDate(date) {
         // Obtener el año, mes, día, hora, minuto y segundo
         const year = date.getFullYear();
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -46,9 +32,6 @@ export default function TransactionModal(props) {
         const minutes = String(date.getMinutes()).padStart(2, '0');
         const seconds = String(date.getSeconds()).padStart(2, '0');
 
-        // Obtener el desplazamiento de la zona horaria en minutos
-        const offsetMinutes = date.getTimezoneOffset();
-
         // Calcular la diferencia de tiempo en horas y minutos
         const offsetHours = Math.abs(offsetMinutes) / 60;
         const offsetSign = offsetMinutes < 0 ? '+' : '-';
@@ -56,6 +39,27 @@ export default function TransactionModal(props) {
 
         return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offset}`;
     }
+
+    const handleUpdate = async () => {
+        const response = await axios.put(
+            `${BASE_URL}/expenses/transaction`,
+            selected_transaction,
+            {headers: headers}
+        );
+
+        const updated_transaction = response.data;
+
+        // Now we need to update the transactions list without making a call
+        const new_transactions = transactions.map((transaction) => {
+            if (transaction.id === updated_transaction.id) {
+                return updated_transaction;
+            } else {
+                return transaction;
+            }
+        });
+        setTransactions(new_transactions);
+    }
+
 
     const handleCreate = async () => {
         let amount
@@ -70,10 +74,9 @@ export default function TransactionModal(props) {
             amount = selected_transaction.amount.EUR;
             currency = 'EUR';
         }
-        const date_object = new Date(selected_transaction.datetime);
 
         const serialized_transaction = {
-            datetime: formatDate(date_object),
+            datetime: selected_transaction.datetime,
             category: selected_transaction.category,
             subcategory: selected_transaction.subcategory,
             source: selected_transaction.source,
@@ -89,10 +92,6 @@ export default function TransactionModal(props) {
             {headers: headers}
         );
         const added_transaction = response.data;
-        const datetime_obj = new Date(added_transaction.datetime);
-        const offset = datetime_obj.getTimezoneOffset();
-        datetime_obj.setMinutes(datetime_obj.getMinutes() + offset);
-        added_transaction.datetime = `${datetime_obj.getFullYear()}-${String(datetime_obj.getMonth() + 1).padStart(2, '0')}-${String(datetime_obj.getDate()).padStart(2, '0')}T${String(datetime_obj.getHours()).padStart(2, '0')}:${String(datetime_obj.getMinutes()).padStart(2, '0')}`;
         setTransactions([added_transaction].concat(transactions));
     }
 
@@ -134,7 +133,7 @@ export default function TransactionModal(props) {
             return;
         }
 
-
+        selected_transaction.datetime = serializeDate(new Date(selected_transaction.datetime));
         let text
         if (selected_transaction.id) {
             text = 'Gasto actualizado'
@@ -234,6 +233,16 @@ export default function TransactionModal(props) {
         });
     }
 
+    const formatInputDatetime = (datetime, is_a_change = false) => {
+        const datetime_obj = new Date(datetime);
+        const offset = datetime_obj.getTimezoneOffset();
+        if (!is_a_change) {
+            datetime_obj.setMinutes(datetime_obj.getMinutes() - offset * 2);
+            return datetime_obj.toISOString().split('.')[0];
+        }
+        return datetime_obj.toISOString().split('.')[0];
+    }
+
     return <Modal size="lg" show={selected_transaction} onHide={handleClose}>
         {
             selected_transaction &&
@@ -256,10 +265,10 @@ export default function TransactionModal(props) {
                                 <Form.Control
                                     type="datetime-local"
                                     placeholder="Completar fecha"
-                                    value={selected_transaction.datetime}
+                                    value={formatInputDatetime(selected_transaction.datetime, false)}
                                     onChange={(e) => setSelectedTransaction({
                                         ...selected_transaction,
-                                        datetime: e.target.value
+                                        datetime: formatInputDatetime(e.target.value, true)
                                     })}
                                 />
                             </Form.Group>

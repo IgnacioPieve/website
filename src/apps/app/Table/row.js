@@ -137,20 +137,8 @@ export default function Row(props) {
             .trim();
     }
 
-    const select_transaction = () => {
-        // datetime format 2024-04-13T02:05:00
-
-        const date_obj = new Date(transaction.datetime);
-        const offset = date_obj.getTimezoneOffset();
-        date_obj.setMinutes(date_obj.getMinutes() - offset);
-
-        transaction.datetime = date_obj.toISOString().split('.')[0];
-
-        setSelectedTransaction(transaction);
-    }
-
     return (
-        <div className={"row p-2 transaction"} style={{width: '100%'}} onClick={select_transaction}>
+        <div className={"row p-2 transaction"} style={{width: '100%'}} onClick={() => setSelectedTransaction(transaction)}>
 
             <div className="col-2">
                 {formatCategory(transaction.category)}
