@@ -24,6 +24,13 @@ export default function Table() {
     const [selected_transaction, setSelectedTransaction] = React.useState(null);
     const [categories, setCategories] = React.useState([])
 
+    const sources = [
+        '💳 Tarjeta de crédito',
+        '💳 Tarjeta de débito',
+        '🏦 Transferencia',
+        '💵 Efectivo'
+    ]
+
     const getTransactions = async (filters) => {
         const response = await axios.get(
             baseURL,
@@ -113,8 +120,9 @@ export default function Table() {
     const addTransaction = () => {
         setSelectedTransaction({
             datetime: null,
-            category: null,
-            subcategory: null,
+            category: '🛒 Supermercado',
+            subcategory: '⭐ General',
+            source: '💳 Tarjeta de crédito',
             description: null,
             amount: {},
         });
@@ -133,13 +141,13 @@ export default function Table() {
                         />
                     </div>
                     <div className="col">
-                        {/*<button*/}
-                        {/*    type="button"*/}
-                        {/*    class="btn btn-outline-success"*/}
-                        {/*    onClick={addTransaction}*/}
-                        {/*>*/}
-                        {/*    Añadir*/}
-                        {/*</button>*/}
+                        <button
+                            type="button"
+                            class="btn btn-outline-success"
+                            onClick={addTransaction}
+                        >
+                            Añadir
+                        </button>
                     </div>
                 </div>
                 <SwipeableList fullSwipe={true} type={ListType.IOS} threshold={.01}>
@@ -159,6 +167,7 @@ export default function Table() {
                 transactions={transactions}
                 setTransactions={setTransactions}
                 categories={categories}
+                sources={sources}
                 headers={headers}
             />
         </div>

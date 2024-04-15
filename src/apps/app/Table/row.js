@@ -110,10 +110,13 @@ export default function Row(props) {
         </div>
     }
 
-    const formatDate = (date) => {
+    const formatDate = () => {
         // Input "2024-04-07T20:14:00"
         // Output "24 Mar 2024, 18:00"
-        const date_obj = new Date(date);
+        const offset = new Date().getTimezoneOffset();
+        const date_obj = new Date(transaction.datetime);
+        date_obj.setMinutes(date_obj.getMinutes() - offset);
+
         const day = date_obj.getDate();
         const month = date_obj.toLocaleString('default', {month: 'short'});
         const year = date_obj.getFullYear();
@@ -135,6 +138,14 @@ export default function Row(props) {
     }
 
     const select_transaction = () => {
+        // datetime format 2024-04-13T02:05:00
+
+        const date_obj = new Date(transaction.datetime);
+        const offset = date_obj.getTimezoneOffset();
+        date_obj.setMinutes(date_obj.getMinutes() - offset);
+
+        transaction.datetime = date_obj.toISOString().split('.')[0];
+
         setSelectedTransaction(transaction);
     }
 
@@ -146,7 +157,7 @@ export default function Row(props) {
             </div>
             <div className="col-5 ms-3 justify-content-center align-self-center">
                 <div className="row description">{cleanText(transaction.description)}</div>
-                <div className="row datetime">{formatDate(transaction.datetime)}</div>
+                <div className="row datetime">{formatDate()}</div>
             </div>
             <div className="col justify-content-center align-self-center">
                 {formatCurrencies(transaction.original_currency, transaction.amount)}
