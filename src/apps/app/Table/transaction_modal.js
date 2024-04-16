@@ -292,7 +292,9 @@ export default function TransactionModal(props) {
                                         <Form.Select
                                             value={selected_transaction.category}
                                             onChange={(e) => setSelectedTransaction({
-                                                ...selected_transaction, category: e.target.value
+                                                ...selected_transaction,
+                                                category: e.target.value,
+                                                subcategory: categories.find((category) => category.category === e.target.value).subcategories[0]
                                             })}
                                         >
                                             {categories.map((category) => {
